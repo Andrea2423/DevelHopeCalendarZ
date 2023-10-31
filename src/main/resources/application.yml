@@ -1,0 +1,19 @@
+server:
+    port: 8080
+spring:
+    application:
+        name: CalendarZ
+    datasource:
+        password: password
+        url: jdbc:mysql://localhost:3306/newdb
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+    jackson:
+        time-zone: UTC
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL5Dialect
+        show-sql: true

@@ -5,12 +5,18 @@ import DevelHope.Calendar.repository.CalendarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CalendarioService {
-    @Autowired
+
     CalendarioRepository calendarioRepository;
+
+    @Autowired
+    public CalendarioService(CalendarioRepository calendarioRepository) {
+        this.calendarioRepository = calendarioRepository;
+    }
 
     public void createCalendario(Calendario calendario) {
         calendarioRepository.save(calendario);
@@ -20,21 +26,34 @@ public class CalendarioService {
         calendarioRepository.deleteById(id);
     }
 
-    public void updateCalendario(Calendario calendario) {
-        Optional<Calendario> calendarioEsistente = calendarioRepository.findById(calendario.getId());
-        if (calendarioEsistente.isPresent()) {
-            //se il calendario esiste me lo prendi
-            Calendario calendarioAggiornato = calendarioEsistente.get();
-            calendarioAggiornato.setTitolo(calendario.getTitolo());
-            calendarioAggiornato.setDescrizione(calendario.getDescrizione());
-            calendarioAggiornato.setColor(calendario.getColor());
-            calendarioRepository.save(calendarioAggiornato);
-
-        }
-
+    public Calendario updateCalendario(long id, Calendario calendario) {
+        return calendarioRepository.findById(id)
+                .map(calendarioEsistente -> {
+                    if (calendario.getTitolo() != null) {
+                        calendarioEsistente.setTitolo(calendario.getTitolo());
+                    }
+                    if (calendario.getDescrizione() != null) {
+                        calendarioEsistente.setDescrizione(calendario.getDescrizione());
+                    }
+                    if (calendario.getColor() != null) {
+                        calendarioEsistente.setColor(calendario.getColor());
+                    }
+                    if (calendario.getData() != null) {
+                        calendarioEsistente.setData(calendario.getData());
+                    }
+                    if (calendario.getUtenti() != null) {
+                        calendarioEsistente.setUtenti(calendario.getUtenti());
+                    }
+                    return calendarioRepository.save(calendarioEsistente);
+                })
+                .orElse(null);
     }
 
     public Optional<Calendario> vediCalendario(long id) {
         return calendarioRepository.findById(id);
+    }
+
+    public List<Calendario> vediCalendari() {
+        return calendarioRepository.findAll();
     }
 }

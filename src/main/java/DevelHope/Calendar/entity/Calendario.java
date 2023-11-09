@@ -4,7 +4,6 @@ package DevelHope.Calendar.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,26 +19,51 @@ public class Calendario {
     private String descrizione;
     @NotBlank
     private String color;
-    //  @OneToMany(mappedBy = "calendario", cascade = CascadeType.ALL, orphanRemoval = true)
-    //  private List<Evento> eventi;
+    @ManyToMany
+    @JoinTable(
+            name = "calendario_evento",
+            joinColumns = @JoinColumn(name = "calendario_id"),
+            inverseJoinColumns = @JoinColumn(name = "evento_id")
+    )
+    private List<Evento> eventi;
     @ManyToMany
     @JoinTable(name = "calendario_utente", joinColumns = @JoinColumn(name = "calendario_id"),
             inverseJoinColumns = @JoinColumn(name = "utente_id"))
     private List<Utente> utenti;
-    @NotNull @JsonFormat(pattern = "dd-MM-yyyy")
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "data_creazione_calendario")
-    private LocalDate data = LocalDate.now();
+    private LocalDate dataCreazioneCalendario;
 
-    public Calendario(String titolo, String Descrizione, String color) {
+    public Calendario(long id, String titolo, String descrizione, String color, List<Evento> eventi, List<Utente> utenti, LocalDate dataCreazioneCalendario) {
+        this.id = id;
         this.titolo = titolo;
-        this.descrizione = Descrizione;
+        this.descrizione = descrizione;
         this.color = color;
-
-
+        this.eventi = eventi;
+        this.utenti = utenti;
+        this.dataCreazioneCalendario = dataCreazioneCalendario;
     }
+
 
     public Calendario() {
 
+    }
+
+    public List<Evento> getEventi() {
+        return eventi;
+    }
+
+    public void setEventi(List<Evento> eventi) {
+        this.eventi = eventi;
+    }
+
+    public LocalDate getDataCreazioneCalendario() {
+        return dataCreazioneCalendario;
+    }
+
+    public void setDataCreazioneCalendario(LocalDate dataCreazioneCalendario) {
+        this.dataCreazioneCalendario = dataCreazioneCalendario;
     }
 
     public long getId() {
@@ -82,12 +106,9 @@ public class Calendario {
         this.utenti = utenti;
     }
 
-    public LocalDate getData() {
-        return data;
-    }
 
     public void setData(LocalDate data) {
-        this.data = data;
+        this.dataCreazioneCalendario = dataCreazioneCalendario;
     }
 
 }

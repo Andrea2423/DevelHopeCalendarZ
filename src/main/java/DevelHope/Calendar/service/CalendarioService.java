@@ -38,8 +38,8 @@ public class CalendarioService {
                     if (calendario.getColor() != null) {
                         calendarioEsistente.setColor(calendario.getColor());
                     }
-                    if (calendario.getData() != null) {
-                        calendarioEsistente.setData(calendario.getData());
+                    if (calendario.getDataCreazioneCalendario() != null) {
+                        calendarioEsistente.setData(calendario.getDataCreazioneCalendario());
                     }
                     if (calendario.getUtenti() != null) {
                         calendarioEsistente.setUtenti(calendario.getUtenti());

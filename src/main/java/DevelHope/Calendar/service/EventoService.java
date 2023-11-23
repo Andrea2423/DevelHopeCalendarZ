@@ -37,9 +37,7 @@ public class EventoService {
                     }
                     if (evento.getColor() != null) {
                         eventoEsistente.setColor(evento.getColor());
-                    }
-                    if (evento.getData() != null) {
-                        eventoEsistente.setData(evento.getData());
+
                     }
                     if (evento.getStartTime() != null) {
                         eventoEsistente.setStartTime(evento.getStartTime());

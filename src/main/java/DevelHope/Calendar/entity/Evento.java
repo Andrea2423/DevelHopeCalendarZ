@@ -1,11 +1,9 @@
 package DevelHope.Calendar.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,8 +26,7 @@ public class Evento {
             inverseJoinColumns = @JoinColumn(name = "utente_id")
     )
     private List<Utente> invitati;
-    @NotNull @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate data ;
+
     @NotNull
     private LocalDateTime startTime;
     @NotNull
@@ -77,13 +74,7 @@ public class Evento {
         this.invitati = invitati;
     }
 
-    public LocalDate getData() {
-        return data;
-    }
 
-    public void setData(LocalDate data) {
-        this.data = data;
-    }
 
     public LocalDateTime getStartTime() {
         return startTime;

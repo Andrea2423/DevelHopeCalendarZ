@@ -1,7 +1,9 @@
 package DevelHope.Calendar.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.Set;
 
@@ -17,10 +19,16 @@ public class Utente {
     private String nome;
     @NotBlank
     private String cognome;
+    @Email
+    @Column(unique = true)
     @NotBlank
     private String email;
     @NotBlank
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
     private String password;
+    @ManyToOne
+    @JoinColumn(name = "calendario_id")
+    private Calendario calendario;
     @ManyToMany
     private Set<Evento> eventi;
 
@@ -69,6 +77,14 @@ public class Utente {
 
     public Set<Evento> getEventi() {
         return eventi;
+    }
+
+    public Calendario getCalendario() {
+        return calendario;
+    }
+
+    public void setCalendario(Calendario calendario) {
+        this.calendario = calendario;
     }
 
     public void setEventi(Set<Evento> eventi) {

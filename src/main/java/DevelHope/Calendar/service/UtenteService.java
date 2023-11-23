@@ -28,19 +28,20 @@ public class UtenteService {
 
     public Utente updateUtente(long id, Utente utente) {
         return utenteRepository.findById(id)
-                .map(utenteEsistente -> {
-                    utenteEsistente.setNome(utente.getNome());
-                    utenteEsistente.setCognome(utente.getCognome());
-                    utenteEsistente.setEmail(utente.getEmail());
-                    utenteEsistente.setPassword(utente.getPassword());
-
-                    // Pulisci e aggiorna la relazione @ManyToMany con gli eventi
-                    if (utente.getEventi() != null) {
-                        utenteEsistente.getEventi().clear();
-                        utenteEsistente.getEventi().addAll(utente.getEventi());
+                .map(UtenteEsistente -> {
+                    if (utente.getNome() != null) {
+                        UtenteEsistente.setNome(utente.getNome());
                     }
-
-                    return utenteRepository.save(utenteEsistente);
+                    if (utente.getCognome() != null){
+                        UtenteEsistente.setCognome(utente.getCognome());
+                    }
+                    if (utente.getEmail() != null){
+                        UtenteEsistente.setEmail(utente.getEmail());
+                    }
+                    if (utente.getPassword() != null){
+                        UtenteEsistente.setPassword(utente.getPassword());
+                    }
+                    return utenteRepository.save(UtenteEsistente);
                 })
                 .orElse(null);
     }

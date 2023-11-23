@@ -26,29 +26,14 @@ public class Calendario {
             inverseJoinColumns = @JoinColumn(name = "evento_id")
     )
     private List<Evento> eventi;
-    @ManyToMany
-    @JoinTable(name = "calendario_utente", joinColumns = @JoinColumn(name = "calendario_id"),
-            inverseJoinColumns = @JoinColumn(name = "utente_id"))
+    @OneToMany(mappedBy = "calendario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Utente> utenti;
-
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "data_creazione_calendario")
     private LocalDate dataCreazioneCalendario;
 
-    public Calendario(long id, String titolo, String descrizione, String color, List<Evento> eventi, List<Utente> utenti, LocalDate dataCreazioneCalendario) {
-        this.id = id;
-        this.titolo = titolo;
-        this.descrizione = descrizione;
-        this.color = color;
-        this.eventi = eventi;
-        this.utenti = utenti;
-        this.dataCreazioneCalendario = dataCreazioneCalendario;
-    }
 
-
-    public Calendario() {
-
-    }
+    public Calendario() { }
 
     public List<Evento> getEventi() {
         return eventi;

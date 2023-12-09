@@ -1,5 +1,8 @@
 package DevelHope.Calendar.entity;
 
+import DevelHope.Calendar.util.RecurrenceType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,23 +20,28 @@ public class Evento {
     @NotBlank
     private String titolo;
     private String descrizione;
-    @NotBlank
-    private String color;
-    @ManyToMany
-    @JoinTable(
-            name = "invited",
-            joinColumns = @JoinColumn(name = "evento_id"),
-            inverseJoinColumns = @JoinColumn(name = "utente_id")
-    )
+
+    @ManyToMany(mappedBy = "eventi")
+    @JsonIgnore
     private List<Utente> invitati;
 
     @NotNull
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime startTime;
-    @NotNull
-    private LocalDateTime endTime;
-    @ManyToMany(mappedBy = "eventi")
-    private List<Calendario> calendari;
+    private RecurrenceType recurrenceType;
 
+    @JsonIgnore
+    private Integer recurrenceInterval;
+
+    @NotNull
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    private LocalDateTime endTime;
+    @ManyToOne
+    @JoinColumn(name = "calendar_id")
+    @JsonIgnore
+    private Calendario calendario;
+    public Evento() {
+    }
     public long getId() {
         return id;
     }
@@ -45,6 +53,23 @@ public class Evento {
     public String getTitolo() {
         return titolo;
     }
+
+    public RecurrenceType getRecurrenceType() {
+        return recurrenceType;
+    }
+
+    public void setRecurrenceType(RecurrenceType recurrenceType) {
+        this.recurrenceType = recurrenceType;
+    }
+
+    public Integer getRecurrenceInterval() {
+        return recurrenceInterval;
+    }
+
+    public void setRecurrenceInterval(Integer recurrenceInterval) {
+        this.recurrenceInterval = recurrenceInterval;
+    }
+
 
     public void setTitolo(String titolo) {
         this.titolo = titolo;
@@ -58,12 +83,12 @@ public class Evento {
         this.descrizione = descrizione;
     }
 
-    public String getColor() {
-        return color;
+    public Calendario getCalendario() {
+        return calendario;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setCalendario(Calendario calendario) {
+        this.calendario = calendario;
     }
 
     public List<Utente> getInvitati() {
@@ -73,7 +98,6 @@ public class Evento {
     public void setInvitati(List<Utente> invitati) {
         this.invitati = invitati;
     }
-
 
 
     public LocalDateTime getStartTime() {
@@ -90,16 +114,5 @@ public class Evento {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
-    }
-
-    public List<Calendario> getCalendari() {
-        return calendari;
-    }
-
-    public void setCalendari(List<Calendario> calendari) {
-        this.calendari = calendari;
-    }
-
-    public Evento() {
     }
 }

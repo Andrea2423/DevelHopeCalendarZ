@@ -7,49 +7,45 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 public class CalendarioController {
     @Autowired
     CalendarioService calendarioService;
 
     @GetMapping("/calendario/{id}")
-    public ResponseEntity<Calendario> vediCalendario(@PathVariable long id) {
-        Optional<Calendario> calendario = calendarioService.vediCalendario(id);
-        if (calendario.isPresent()) {
-            return new ResponseEntity<>(calendario.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity vediCalendario(@PathVariable long id) {
+        try {
+            return ResponseEntity.ok(calendarioService.vediCalendariByUser(id));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @PutMapping("/calendario/{id}")
+    public ResponseEntity updateCalendario(@PathVariable long id, @RequestBody Calendario calendario) {
+        try {
+            return ResponseEntity.ok(calendarioService.updateCalendario(id, calendario));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @GetMapping("/calendari")
-    public List<Calendario> vediCalendari() {
-        return calendarioService.vediCalendari();
-    }
 
-    @PutMapping("/update-calendario/{id}")
-    public ResponseEntity<?> updateCalendario(@PathVariable long id, @RequestBody Calendario calendario) {
-        Calendario calendarioModificato = calendarioService.updateCalendario(id, calendario);
-        if (calendarioModificato == null) {
-            return ResponseEntity.notFound().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteCalendar(@PathVariable long id){
+        try {
+            return ResponseEntity.ok(calendarioService.deleteCalendario(id));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.ok(calendarioModificato);
-    }
-    //return ResponseEntity<Calendar>.ok(calendarioModificato);
 
-
-    @DeleteMapping("/delete-calendario/{id}")
-    public ResponseEntity<String> deleteCalendario(@PathVariable long id) {
-        calendarioService.deleteCalendario(id);
-        return ResponseEntity.ok("Calendario eliminato");
     }
 
-    @PostMapping("/create-calendario")
-    public ResponseEntity<String> createCalendario(@RequestBody Calendario calendario) {
-        calendarioService.createCalendario(calendario);
-        return ResponseEntity.ok("Calendario creato");
-    }
-}
+    @PostMapping("/{userID}")
+    public ResponseEntity createCalendario(@PathVariable long userID, @RequestBody Calendario calendario) {
+        try {
+            return ResponseEntity.ok(calendarioService.createCalendar(userID, calendario));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }}

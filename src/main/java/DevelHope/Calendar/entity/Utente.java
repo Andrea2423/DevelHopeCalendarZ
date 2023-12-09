@@ -1,11 +1,13 @@
 package DevelHope.Calendar.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -26,11 +28,15 @@ public class Utente {
     @NotBlank
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
     private String password;
-    @ManyToOne
-    @JoinColumn(name = "calendario_id")
-    private Calendario calendario;
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Calendario> calendario = new ArrayList<>();
     @ManyToMany
-    private Set<Evento> eventi;
+    @JoinTable(name = "user_event",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @JsonIgnore
+    private List<Evento> eventi;
 
     public Utente() {
     }
@@ -75,19 +81,21 @@ public class Utente {
         this.password = password;
     }
 
-    public Set<Evento> getEventi() {
-        return eventi;
-    }
 
-    public Calendario getCalendario() {
+    public List<Calendario> getCalendario() {
         return calendario;
     }
 
-    public void setCalendario(Calendario calendario) {
+    public List<Evento> getEventi() {
+        return eventi;
+    }
+
+    public void setEventi(List<Evento> eventi) {
+        this.eventi = eventi;
+    }
+
+    public void setCalendario(List<Calendario> calendario) {
         this.calendario = calendario;
     }
 
-    public void setEventi(Set<Evento> eventi) {
-        this.eventi = eventi;
-    }
 }

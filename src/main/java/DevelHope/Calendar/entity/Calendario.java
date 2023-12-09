@@ -2,6 +2,7 @@
 package DevelHope.Calendar.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -19,15 +20,12 @@ public class Calendario {
     private String descrizione;
     @NotBlank
     private String color;
-    @ManyToMany
-    @JoinTable(
-            name = "calendario_evento",
-            joinColumns = @JoinColumn(name = "calendario_id"),
-            inverseJoinColumns = @JoinColumn(name = "evento_id")
-    )
-    private List<Evento> eventi;
-    @OneToMany(mappedBy = "calendario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Utente> utenti;
+    @OneToMany(mappedBy = "calendario")
+    private List<Evento> eventi ;
+    @ManyToOne
+    @JoinColumn(name = "user_calendar_id")
+    @JsonIgnore
+    private Utente utente;
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "data_creazione_calendario")
     private LocalDate dataCreazioneCalendario;
@@ -83,14 +81,14 @@ public class Calendario {
         this.color = color;
     }
 
-    public List<Utente> getUtenti() {
-        return utenti;
+
+    public Utente getUtente() {
+        return utente;
     }
 
-    public void setUtenti(List<Utente> utenti) {
-        this.utenti = utenti;
+    public void setUtente(Utente utente) {
+        this.utente = utente;
     }
-
 
     public void setData(LocalDate data) {
         this.dataCreazioneCalendario = dataCreazioneCalendario;

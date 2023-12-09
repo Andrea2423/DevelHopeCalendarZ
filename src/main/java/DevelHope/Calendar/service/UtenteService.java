@@ -1,5 +1,6 @@
 package DevelHope.Calendar.service;
 
+import DevelHope.Calendar.entity.Calendario;
 import DevelHope.Calendar.entity.Utente;
 import DevelHope.Calendar.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,25 +11,34 @@ import java.util.Optional;
 
 @Service
 public class UtenteService {
-
+    @Autowired
     UtenteRepository utenteRepository;
 
-    @Autowired
-    public UtenteService(UtenteRepository utenteRepository) {
-        this.utenteRepository = utenteRepository;
+    public Utente createUtente(Utente utente) throws Exception {
+        try {
+            Calendario calendario = new Calendario();
+            calendario.setTitolo("Calendario di " + utente.getNome());
+            calendario.setUtente(utente);
+
+            utente.getCalendario().add(calendario);
+            return utenteRepository.save(utente);
+           } catch (Exception e) {
+               throw new Exception(String.format("Email %s already exist", utente.getEmail()));
+           }
     }
 
-    public void createUtente(Utente utente) {
-        utenteRepository.save(utente);
+    public String deleteUtente(long id) throws Exception {
+        if (utenteRepository.findById(id).isPresent()) {
+            utenteRepository.deleteById(id);
+            return String.format("User with ID %s deleted", id);
+        } else {
+            throw new Exception(String.format("User with ID %s not exist", id));
+        }
     }
-
-    public void deleteUtente(long id) {
-        utenteRepository.deleteById(id);
-    }
-
-    public Utente updateUtente(long id, Utente utente) {
+    public Utente updateUtente(long id, Utente utente) throws Exception {
         return utenteRepository.findById(id)
                 .map(UtenteEsistente -> {
+
                     if (utente.getNome() != null) {
                         UtenteEsistente.setNome(utente.getNome());
                     }
@@ -42,15 +52,33 @@ public class UtenteService {
                         UtenteEsistente.setPassword(utente.getPassword());
                     }
                     return utenteRepository.save(UtenteEsistente);
-                })
-                .orElse(null);
+                } ).orElseThrow(() -> new Exception(String.format("User with ID %s not found", id)));
+        }
+
+
+    public Optional<Utente> viewUserByEmail(String email) throws Exception{
+
+        try {
+            return utenteRepository.findByEmail(email);
+        } catch (Exception e){
+            throw new Exception(String.format("User with email %s not found", email));
+        }
+
+    }
+    public List<Utente> viewUsers() throws Exception{
+        if (utenteRepository.findAll().isEmpty()){
+            return utenteRepository.findAll();
+        } else {
+            throw new Exception("Users not found");
+        }
+
     }
 
-    public Optional<Utente> viewUtente(long id) {
-        return utenteRepository.findById(id);
-    }
+    public Optional<Utente> viewUserToId(long id) throws Exception{
+        if (utenteRepository.findById(id).isPresent()){
+            return utenteRepository.findById(id);
+        } else {
+            throw new Exception(String.format("User with ID %s not found", id));
+        }
 
-    public List<Utente> viewUtenti() {
-        return utenteRepository.findAll();
-    }
-}
+    }}

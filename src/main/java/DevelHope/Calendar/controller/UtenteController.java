@@ -7,48 +7,69 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 public class UtenteController {
 
     @Autowired
     UtenteService utenteService;
 
-    @GetMapping("/utente/{id}")
-    public ResponseEntity<Utente> viewUtente(@PathVariable long id) {
-        Optional<Utente> utente = utenteService.viewUtente(id);
-        if (utente.isPresent()) {
-            return new ResponseEntity<>(utente.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @GetMapping("/{id}")
+    public ResponseEntity getUserById(@PathVariable int id) {
+        try {
+            return ResponseEntity.ok(utenteService.viewUserToId(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+
     }
 
-    @GetMapping("/utenti")
-    public List<Utente> viewUtenti() {
-        return utenteService.viewUtenti();
+    @GetMapping("/email/{email}")
+    public ResponseEntity getUserByEmail(@PathVariable String email) {
+        try {
+            return ResponseEntity.ok(utenteService.viewUserByEmail(email));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
-    @PutMapping("/update-utente/{id}")
-    public ResponseEntity<?> updateUtente(@PathVariable long id, @RequestBody Utente utente) {
-        Utente utenteModified = utenteService.updateUtente(id, utente);
-        if (utenteModified == null) {
-            return ResponseEntity.notFound().build();
+    @PutMapping("/utente/{id}")
+    public ResponseEntity updateUtente(@PathVariable long id, @RequestBody Utente utente) {
+        try {
+            return ResponseEntity.ok(utenteService.updateUtente(id, utente));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.ok(utenteModified);
+
     }
 
     @DeleteMapping("/delete-utente/{id}")
-    public ResponseEntity<String> deleteUtente(@PathVariable long id) {
-        utenteService.deleteUtente(id);
-        return ResponseEntity.ok("Utente eliminato");
+    public ResponseEntity deleteUtente(@PathVariable long id) {
+        try {
+            return ResponseEntity.ok(utenteService.deleteUtente(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
+
+    @GetMapping
+    public ResponseEntity geAllUser() {
+        try {
+            return ResponseEntity.ok(utenteService.viewUsers());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
     @PostMapping("/create-utente")
-    public ResponseEntity<String> createUtente(@RequestBody Utente utente) {
-        utenteService.createUtente(utente);
-        return ResponseEntity.ok("Utente creato");
+    public ResponseEntity createUtente(@RequestBody Utente utente) {
+        try {
+            return ResponseEntity.ok(utenteService.createUtente(utente));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 }

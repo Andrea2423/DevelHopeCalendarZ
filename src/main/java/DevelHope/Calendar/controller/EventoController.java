@@ -3,11 +3,11 @@ package DevelHope.Calendar.controller;
 import DevelHope.Calendar.entity.Evento;
 import DevelHope.Calendar.service.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 @RestController
 public class EventoController {
@@ -15,35 +15,54 @@ public class EventoController {
     @Autowired
     EventoService eventoService;
 
-    @GetMapping("/evento/{id}")
-    public ResponseEntity<Evento> viewEvento(@PathVariable long id) {
-        Optional<Evento> evento = eventoService.vediEvento(id);
-        return evento.map(value -> ResponseEntity.ok().body(value))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+
 
     @GetMapping("/eventi")
-    public List<Evento> viewEventi() {
-        return eventoService.vediEvento();
+    public ResponseEntity viewEventi(long id) {
+        try {
+            return ResponseEntity.ok(eventoService.vediEvento(id));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    @PutMapping("/update-evento/{id}")
-    public ResponseEntity<?> updateEvento(@PathVariable long id, @RequestBody Evento evento) {
-        Evento eventoModified = eventoService.updateEvento(id, evento);
-        return eventoModified != null ?
-                ResponseEntity.ok(eventoModified) :
-                ResponseEntity.notFound().build();
+    @PutMapping("/evento/{id}")
+    public ResponseEntity updateEvento(@PathVariable long id, @RequestBody Evento evento) {
+        try {
+            return ResponseEntity.ok(eventoService.vediEvento(id));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @PutMapping("/{eventID}/user/{userID}")
+    public ResponseEntity invitedUser(@PathVariable long eventID, @PathVariable int userID){
+
+        try {
+            return ResponseEntity.ok(eventoService.inviteUser(eventID, userID));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    @DeleteMapping("/delete-evento/{id}")
-    public ResponseEntity<String> deleteEvento(@PathVariable long id) {
-        eventoService.deleteEvento(id);
-        return ResponseEntity.ok("Evento eliminato");
+    @DeleteMapping("/event/{id}")
+    public ResponseEntity deleteEvento( long id) {
+        try {
+            return ResponseEntity.ok(eventoService.deleteEvento(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    @PostMapping("/create-evento")
-    public ResponseEntity<String> createEvento(@RequestBody Evento evento) {
-        eventoService.createEvento(evento);
-        return ResponseEntity.ok("Evento creato");
+    @PostMapping("/{calendarID}/start/{startTime}/duration/{duration}")
+    public ResponseEntity createNewEvent(@PathVariable int calendarID,
+                                         @RequestBody Evento event,
+                                         @PathVariable LocalDateTime startTime,
+                                         @PathVariable int duration) {
+
+        try {
+            return ResponseEntity.ok(eventoService.createEvent(calendarID, event, startTime, duration));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }
